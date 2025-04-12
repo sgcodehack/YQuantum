@@ -1,42 +1,20 @@
-from qiskit import QuantumCircuit
-from qiskit.quantum_info import Pauli, Statevector
+############# Imports #############
+import functions
+import matplotlib
 import numpy as np
+from qiskit.circuit import library as circ_lib
 
-def qhash(b: bytes):
-    #create circuit
-    k = len(b)
-    qc = QuantumCircuit(k)
-    
-    #rotate qubits
-    for i in range(k):
-        theta = (b[i] / 255) * np.pi  #scale to [0, π]
-        qc.ry(theta, i)
-    
-    #entangle qubits
-    #layer 1: entangle every adjacent qubit
-    for i in range(0, k - 1):
-        qc.cx(i, i + 1, )
-    
-    #layer 2: vary theta
-    for i in range(0, k - 1, 2):
-        phi = theta = (b[i] / 255) * np.pi
-        qc.cry(phi, i, i + 1)
-    
-    #layer 3: change phase
-    for i in range(0, k - 1, 3):
-        qc.cz(i, i + 1)
+############# Program Start #############
+input = "Hello, World!"
 
-    #measure
-    sv = Statevector.from_instruction(qc)
-    expectation = [sv.expectation_value(Pauli("Z"), [i]).real for i in range(k)]
-    
-    output = bytearray([min(int(((val + 1) / 2) * 256), 255) for val in expectation])
-    
-    return output
-    
+binary_arr = functions.get_bits_from_string(input)
+binary_str = ''.join(str(bit) for bit in binary_arr) ## Potentially unnecessary
 
-def main():
-    print(list(qhash(bytes(range(0, 260, 20)))))
+rotated_on_y_theta_arr = []
+#[np.pi*(sum(binary_arr)/len(binary_arr))]
+for bit in binary_arr:
+    temp = np.pi*(bit/len(binary_arr))
+    rotated_on_y_theta_arr.append(circ_lib. RYGate(temp))
 
-if __name__ == "__main__":
-    main()
+
+print(rotated_on_y_theta_arr)
