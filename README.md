@@ -108,14 +108,6 @@ $$
 
 This step ensures that **any change in the input \( x \) causes a global deformation** of the quantum state — modeling the avalanche effect naturally.
 
-#### **Layered Structure**
-- This **combination of local and non-local interactions** ensures that changes in any input qubit rapidly influence the entire quantum state.
-- The overall operator can be expressed as:
-
-$$
-U_{\text{ent}} = U_{\text{non-local}} \cdot U_{\text{local}}
-$$
-
 (Note: The exact sequence and repetition of these layers would depend on specific implementation parameters, which can be tuned for desired cryptographic strength.)
 
 ---
@@ -158,8 +150,38 @@ This choice simplifies implementation and directly reinforces the input encoding
 When applied to an already entangled state $$\( |\Psi_2\rangle \)$$, this dual-axis approach contributes significantly to the **complexity of the final state's interference pattern**, enhancing unpredictability based on the input parameters.
 
 ---
-## 4 Part
+### 4. Measurement & Single-Shot Hash Output
 
+The final quantum state $$\( |\Psi_3\rangle \)$$, which intricately encodes the input $$\( x \)$$ through amplitude and phase relationships, is measured **once** in the computational basis.
+
+#### Classical Bit String from Measurement
+
+Let $$\( z \in \{0,1\}^n \)$$ represent the specific classical bit string obtained from this **single round of measurement** across all $$\( n \)$$ qubits. This measurement collapses the quantum state to a deterministic classical outcome for that computation.
+
+#### Superquantum Hash Definition
+
+The Superquantum Hash $$\( H(x) \)$$ is defined as:
+
+$$
+H(x) = z \quad \text{(Result of a single measurement round)}
+$$
+
+This definition ensures that the hash output is **deterministic per execution instance**:
+
+- **Determinism**: For any specific computational instance, the measured bitstring $$\( z \)$$ represents a unique and fixed result.
+- **Quantum Probabilism**: While repeated, independent runs of the process on the same input $$\( x \)$$ may yield different outcomes \( z' \) due to quantum probabilistic behavior, \( H(x) \) refers **only** to the result $$\( z \)$$ from the original computation.
+
+#### Functional Determinism for Verification
+
+In systems like blockchain, this deterministic behavior is critical. The validity check for $$\( H(x) \)$$ refers to the specific $$\( z \)$$ obtained during the original computation, ensuring a **fixed reference** for verification protocols.
+
+#### Irreversibility from Measurement Collapse
+
+The inherent irreversibility of the Superquantum Hash arises directly from the quantum measurement collapse, which destroys the original quantum state $$\( |\Psi_3\rangle \)$$. This fundamental property ensures that reversing $$\( H(x) \)$$ to retrieve the original input $$\( x \)$$ is computationally infeasible, providing cryptographic strength.
+
+---
+
+This approach leverages quantum mechanics to achieve a unique combination of **determinism, irreversibility, and probabilistic unpredictability**, making it suitable for secure applications in blockchain and cryptography.
 ---
 
 ## 🔗 Applications in Blockchain & Cryptocurrency
@@ -185,9 +207,3 @@ This algorithm is implemented using:
 All components are compatible with current Qiskit simulators and IBM Q devices.  
 The circuit scales efficiently with input size and uses no exotic gates beyond the NISQ standard.
 
----
-
-## 🧪 Why This Matters
-
-This work presents a **proof-of-concept** for how quantum primitives can build secure hash functions from first principles, instead of relying on post-quantum adaptations.  
-By embedding input sensitivity, interference, and collapse directly into the circuit, we simulate cryptographic hardness using native quantum effects — **irreversibility, superposition, and entanglement**.
