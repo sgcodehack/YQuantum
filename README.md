@@ -158,21 +158,7 @@ This choice simplifies implementation and directly reinforces the input encoding
 When applied to an already entangled state $$\( |\Psi_2\rangle \)$$, this dual-axis approach contributes significantly to the **complexity of the final state's interference pattern**, enhancing unpredictability based on the input parameters.
 
 ---
-
-
-### **State After Entanglement**
-
-After applying the entanglement operator, the quantum state evolves as follows:
-
-$$
-|\Psi_2\rangle = U_{\text{ent}} |\Psi_1\rangle
-$$
-
-This step ensures that **any change in the input \( x \)** causes a **global deformation** of the quantum state. This deformation naturally models the **avalanche effect** through quantum correlations, where even small changes in the input create significant and unpredictable shifts in the final state.
-
----
-
-This detailed approach to entanglement dynamics forms the foundation of the Superquantum Hash's cryptographic strength, ensuring sensitivity, unpredictability, and robustness in quantum-native hashing.
+## 4 Part
 
 ---
 
