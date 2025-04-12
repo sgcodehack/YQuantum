@@ -11,7 +11,7 @@ def qhash(b: bytes):
     for i in range(k):
         theta = (b[i] / 255) * np.pi  #scale to [0, π]
         qc.ry(theta, i)
-     
+    
     #entangle qubits
     #layer 1: entangle every adjacent qubit
     for i in range(0, k - 1):
