@@ -9,8 +9,8 @@ import numpy as np
 NUM_QUBITS = 16
 
 def qhash(b: bytes, bitstring, single_shot = False):
-    # create circuit
     
+    # create circuit
     k = len(b)
     
     for i in range(k, NUM_QUBITS * 2):
@@ -53,7 +53,7 @@ def qhash(b: bytes, bitstring, single_shot = False):
     probs = np.abs(sv.data) ** 2
     entropy = -np.sum(probs * np.log2(probs + 1e-10))
     
-    if single_shot: # blockchain
+    if single_shot: # blockchain, will produce a hash of bitstring length 16 unless converted to 256 length bit string
         qc.measure(range(NUM_QUBITS), range(NUM_QUBITS))
         
         sim = AerSimulator()
@@ -75,7 +75,7 @@ def qhash(b: bytes, bitstring, single_shot = False):
         else:
             output = list_output
             
-    else: # password
+    else: # password, will produce a hash of list length 16 with values from 0 to 255 unless converted to 256 length bit string
         expectation = [sv.expectation_value(Pauli("Z"), [i]).real for i in range(NUM_QUBITS)]
         list_output = list([min(int(((val + 1) / 2) * 256), 255) for val in expectation]) # scales up from -1 to 1 to 0 to 255
         
@@ -134,7 +134,8 @@ def main():
     #     print(collisions[i].hex())
     
     length = 32 # can be any number from 1 to 32
-    print(qhash(random.getrandbits(length * 8).to_bytes(length, byteorder='big'), True)[0])
+    input = random.getrandbits(length * 8).to_bytes(length, byteorder='big')
+    print(qhash(input, bitstring = True, single_shot = False)[0])
  
 if __name__ == "__main__":
   main()
