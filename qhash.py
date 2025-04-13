@@ -124,7 +124,7 @@ def main():
                 
             break
         elif choice == 'e':
-            length = int(input("Enter the amount of bytes: "))
+            length = int(input("Enter the amount of bytes(1 - 32): "))
             bytestring = random.getrandbits(length * 8).to_bytes(length, byteorder='big')
             
             print("hexadecimal representation of input: ", bytestring.hex())
