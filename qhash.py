@@ -66,4 +66,44 @@ def qhash(b: bytes, single_shot = False):
        counts = result.get_counts()
       
        output = list(counts.keys())[0]
-   els
+   else: # password
+       sv = Statevector.from_instruction(qc)
+       
+       probs = np.abs(sv.data) ** 2
+       entropy = -np.sum(probs * np.log2(probs + 1e-10))
+      
+       expectation = [sv.expectation_value(Pauli("Z"), [i]).real for i in range(num_qubits)]
+       output = list([min(int(((val + 1) / 2) * 256), 255) for val in expectation]) # scales up from -1 to 1 to 0 to 255
+  
+   return [output, entropy]
+
+def test(cases):
+    collisions = []
+    hash_book = {}
+
+    for length in range(1, 20):
+        for reps in range(cases):
+            input = random.getrandbits(length * 8).to_bytes(length, byteorder='big')
+            hash = tuple(qhash(input))
+            
+            if hash in hash_book and input != hash_book[hash]:
+                collisions.append(input)
+            
+            hash_book[hash] = input
+    
+    return collisions
+
+def main():
+    # collisions = test(50)
+   
+    # print(len(collisions))
+    # for i in range(len(collisions)):
+    #     print(collisions[i].hex())
+    
+    length = 32
+    input = random.getrandbits(length * 8).to_bytes(length, byteorder='big')
+    print(input.hex())
+    print(qhash(input)[1])
+   
+if __name__ == "__main__":
+   main()
