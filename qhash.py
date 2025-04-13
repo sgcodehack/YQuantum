@@ -9,13 +9,24 @@ MAX_QUBITS = 20
 
 def qhash(b: bytes, single_shot = False):
    # create circuit
-   num_qubits = min(len(b) // 2, MAX_QUBITS)
+   flag = False
+   num_qubits = min(len(b) // 2, MAX_QUBITS) # 2 bytes = 1 qubit
+   
+   if len(b) < MAX_QUBITS: # if there are less bytes than maximum qubits, no need to reduce number of qubits
+       flag = True
+       num_qubits = len(b)
   
    qc = QuantumCircuit(num_qubits, num_qubits)
   
    # rotate qubits -> superposition
    for i in range(0, num_qubits):
-       phi = (b[2 * i] / 255) * np.pi  # scale to [0, π]
+       curr = 0
+       if flag:
+           curr = b[i]
+       else:
+           curr = b[2 * i]
+       
+       phi = (curr / 255) * np.pi  # scale to [0, π]
        qc.ry(phi, i)
   
    # entangle qubits
@@ -25,7 +36,13 @@ def qhash(b: bytes, single_shot = False):
   
    # layer 2: encode phase
    for i in range(0, num_qubits - 1, 2):
-       phi = (b[2 * i] / 255) * np.pi
+       curr = 0
+       if flag:
+           curr = b[i]
+       else:
+           curr = b[2 * i]
+       
+       phi = (curr / 255) * np.pi
        qc.crz(phi, i, i + 1)
   
    # layer 3: encode amplitude
@@ -61,14 +78,13 @@ def test(cases):
     collisions = []
     hash_book = {}
 
-    for length in range(1, 10):
+    for length in range(1, 20):
         for reps in range(cases):
             input = random.getrandbits(length * 8).to_bytes(length, byteorder='big')
             hash = tuple(qhash(input))
             
             if hash in hash_book and input != hash_book[hash]:
                 collisions.append(input)
-                
             
             hash_book[hash] = input
     
@@ -81,8 +97,5 @@ def main():
    for i in range(len(collisions)):
        print(collisions[i].hex())
    
-   
-
-
 if __name__ == "__main__":
    main()
