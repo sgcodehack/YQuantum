@@ -52,7 +52,8 @@ def qhash(b: bytes, single_shot = False):
             if j != i and j != i - 1 and j != i + 1:
                 phi = np.pi / 2
                 qc.cry(phi, i, j)
-                
+
+    #quantum fourier transform to increase the avalanche effect
     qc.append(QFT(num_qubits = num_qubits, do_swaps = False), qc.qubits)
 
     # create output
