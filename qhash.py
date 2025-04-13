@@ -1,14 +1,13 @@
 import math
+import random
 from qiskit import QuantumCircuit, transpile
 from qiskit.quantum_info import Pauli, Statevector
 from qiskit_aer import AerSimulator
 import numpy as np
 
-
 MAX_QUBITS = 20
 
-
-def qhash(b: bytes, single_shot):
+def qhash(b: bytes, single_shot = False):
    # create circuit
    num_qubits = min(len(b) // 2, MAX_QUBITS)
   
@@ -16,8 +15,8 @@ def qhash(b: bytes, single_shot):
   
    # rotate qubits -> superposition
    for i in range(0, num_qubits):
-       theta = (b[2 * i] / 255) * np.pi  # scale to [0, π]
-       qc.ry(theta, i)
+       phi = (b[2 * i] / 255) * np.pi  # scale to [0, π]
+       qc.ry(phi, i)
   
    # entangle qubits
    # layer 1: entangle every adjacent qubit
@@ -26,7 +25,8 @@ def qhash(b: bytes, single_shot):
   
    # layer 2: encode phase
    for i in range(0, num_qubits - 1, 2):
-       qc.cz(i, i + 1)
+       phi = (b[2 * i] / 255) * np.pi
+       qc.crz(phi, i, i + 1)
   
    # layer 3: encode amplitude
    for i in range(0, num_qubits):
@@ -34,9 +34,6 @@ def qhash(b: bytes, single_shot):
            if j != i and j != i - 1 and j != i + 1:
                phi = np.pi / 2
                qc.cry(phi, i, j)
-
-
-
 
    # create output
    output = 0
@@ -60,9 +57,24 @@ def qhash(b: bytes, single_shot):
   
    return output
 
+def test(cases):
+    collisions = 0
+    hash_book = {}
+
+    for length in range(5, 40, 5):
+        for reps in range(cases):
+            input = random.getrandbits(length * 8).to_bytes(length, byteorder='big')
+            hash = qhash(input)
+            
+            if tuple(hash) in hash_book:
+                collisions += 1
+            
+            hash_book[tuple(hash)] = input
+    
+    return collisions
 
 def main():
-   print(qhash(bytes(range(0, 255, 12)), single_shot = False))
+   print(test(30))
 
 
 if __name__ == "__main__":
