@@ -1,7 +1,11 @@
 Required Python Packages:
 1. math
 2. random
-3. qiskit (QuantumCircuit, transpile)
-4. qiskit.quantum_info (Pauli, Statevector)
-5. qiskit_aer (AerSimulator)
-6. numpy 
+3. time
+4. numpy 
+5. collections (Counter)
+6. qiskit_aer (AerSimulator)
+7. qiskit.visualization (plot_histogram)
+8. qiskit (QuantumCircuit, Transpile)
+9. qiskit.quantum_info (Pauli, Statevector)
+10. qiskit.circuit.library (RYGate, RZGate, CXGate, CZGate, CRYGate, QFT)
