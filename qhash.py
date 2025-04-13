@@ -58,23 +58,30 @@ def qhash(b: bytes, single_shot = False):
    return output
 
 def test(cases):
-    collisions = 0
+    collisions = []
     hash_book = {}
 
-    for length in range(5, 40, 5):
+    for length in range(1, 10):
         for reps in range(cases):
             input = random.getrandbits(length * 8).to_bytes(length, byteorder='big')
-            hash = qhash(input)
+            hash = tuple(qhash(input))
             
-            if tuple(hash) in hash_book:
-                collisions += 1
+            if hash in hash_book and input != hash_book[hash]:
+                collisions.append(input)
+                
             
-            hash_book[tuple(hash)] = input
+            hash_book[hash] = input
     
     return collisions
 
 def main():
-   print(test(30))
+   collisions = test(50)
+   
+   print(len(collisions))
+   for i in range(len(collisions)):
+       print(collisions[i].hex())
+   
+   
 
 
 if __name__ == "__main__":
