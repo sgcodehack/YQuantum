@@ -8,7 +8,7 @@ import numpy as np
 
 NUM_QUBITS = 16
 
-def qhash(b: bytes, single_shot = False):
+def qhash(b: bytes, bitstring, single_shot = False):
     # create circuit
     
     k = len(b)
@@ -66,21 +66,27 @@ def qhash(b: bytes, single_shot = False):
         list_output = list(counts.keys())[0]
         
         #256 bit string conversion
-        for i in list_output:
-            output += i
-            
-        for _ in range(240):
-            output += '0'
+        if bitstring:
+            for i in list_output:
+                output += i
+                
+            for _ in range(240):
+                output += '0'
+        else:
+            output = list_output
             
     else: # password
         expectation = [sv.expectation_value(Pauli("Z"), [i]).real for i in range(NUM_QUBITS)]
         list_output = list([min(int(((val + 1) / 2) * 256), 255) for val in expectation]) # scales up from -1 to 1 to 0 to 255
         
         #256 bit string conversion
-        for i in list_output:
-            output += format(i, '08b')
-        for _ in list_output:
-            output += format(0, '08b')
+        if bitstring:
+            for i in list_output:
+                output += format(i, '08b')
+            for _ in list_output:
+                output += format(0, '08b')
+        else:
+            output = list_output
     
     pass
     
@@ -128,7 +134,7 @@ def main():
     #     print(collisions[i].hex())
     
     length = 32 # can be any number from 1 to 32
-    print(qhash(random.getrandbits(length * 8).to_bytes(length, byteorder='big'))[0])
+    print(qhash(random.getrandbits(length * 8).to_bytes(length, byteorder='big'), True)[0])
  
 if __name__ == "__main__":
   main()
