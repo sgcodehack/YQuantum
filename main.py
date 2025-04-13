@@ -127,7 +127,8 @@ def main():
     # for i in range(len(collisions)):
     #     print(collisions[i].hex())
     
-    print(qhash(random.getrandbits(32 * 8).to_bytes(32, byteorder='big'))[0])
+    length = 32 # can be any number from 1 to 32
+    print(qhash(random.getrandbits(length * 8).to_bytes(length, byteorder='big'))[0])
  
 if __name__ == "__main__":
   main()
